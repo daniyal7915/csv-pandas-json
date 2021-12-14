@@ -1,6 +1,6 @@
 CSV to JSON converter using pandas for data processing.
 
-The converter receives paths to  courses, students, tests, marks .csv files and
+The converter receives paths to courses, students, tests, marks .csv files and
 a .json file as command-line arguments. 
 
 If the paths are valid, the program creates a .json file from already existing 
