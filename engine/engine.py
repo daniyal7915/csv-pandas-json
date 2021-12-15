@@ -6,15 +6,19 @@ import json
 class GetData:
     """Get data from input files"""
     template = ['courses.csv', 'students.csv', 'tests.csv', 'marks.csv', '.json']
-    paths = None
+    output_path = None
 
     def get_paths(self):
         print("GetData.get_paths")
         """Check and set file paths"""
-        paths = sys.argv[1:]
+        try:
+            paths = sys.argv[1:]
 
-        if [paths[0][-11:], paths[1][-12:], paths[2][-9:], paths[3][-9:], paths[4][-5:]] == self.template:
-            self.paths = paths
+            if [paths[0][-11:], paths[1][-12:], paths[2][-9:], paths[3][-9:], paths[4][-5:]] == self.template:
+                return paths
+
+        except (IndexError, TypeError):
+            pass
 
     def set_dtype(self, file):
         print('GetData.set_dtype')
@@ -26,31 +30,30 @@ class GetData:
 
         return dtype
 
-    def csv_to_df(self, position, file=None):
+    def csv_to_df(self, path, file=None):
         print('GetData.csv_to_df')
         """Create dataframe from csv"""
-        paths = self.paths
-
-        if paths:
-            try:
-                df = pd.read_csv(paths[position])
-                df.astype(self.set_dtype(file))
-                return df
-            except (FileNotFoundError, ValueError, pd.errors.IntCastingNaNError):
-                pass
+        try:
+            df = pd.read_csv(path)
+            df.astype(self.set_dtype(file))
+            return df
+        except (FileNotFoundError, ValueError, pd.errors.IntCastingNaNError):
+            pass
 
     def get_data(self):
         print('GetData.get_data')
         """Return a dict with created dataframes"""
-        self.get_paths()
+        paths = self.get_paths()
 
-        courses = self.csv_to_df(0, 'courses.csv')
-        students = self.csv_to_df(1, 'students.csv')
-        tests = self.csv_to_df(2)
-        marks = self.csv_to_df(3)
+        if paths:
+            courses = self.csv_to_df(paths[0], 'courses.csv')
+            students = self.csv_to_df(paths[1], 'students.csv')
+            tests = self.csv_to_df(paths[2])
+            marks = self.csv_to_df(paths[3])
 
-        if courses is not None and students is not None and tests is not None and marks is not None:
-            return {'courses': courses, 'students': students, 'tests': tests, 'marks': marks}
+            if courses is not None and students is not None and tests is not None and marks is not None:
+                self.output_path = paths[4]
+                return {'courses': courses, 'students': students, 'tests': tests, 'marks': marks}
 
 
 class CheckData(GetData):
@@ -128,7 +131,7 @@ class Output(CheckData):
             self.output = self.output_data(checked_data)
 
         try:
-            with open(self.paths[4], "w") as outfile:
+            with open(self.output_path, "w") as outfile:
                 outfile.write(json.dumps(self.output, indent=4))
         except (FileNotFoundError, TypeError):
             pass
