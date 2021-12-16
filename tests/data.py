@@ -41,6 +41,10 @@ class Container:
                            {'courses': 1, 'students': 1, 'tests': 1, 'marks': 1}]
         return output
 
+    @property
+    def contained_weight_all(self):
+        return [self.contained_df(), self.contained_df(8), None]
+
 
 
 
