@@ -43,6 +43,39 @@ class TestGetData(TestCase, Container, GetData):
             with self.subTest(n=i):
                 self.assertFalse(self.csv_to_df(self.contained_paths[i]))
 
+    @mock.patch('engine.engine.GetData.get_paths')
+    @mock.patch('engine.engine.GetData.csv_to_df')
+    def test_get_data(self, csv_df, get_paths):
+        """Test the get_data method"""
+        csv_df.side_effect = self.contained_get_data[:12]
+        get_paths.side_effect = self.contained_get_data[12:15]
+
+        self.assertFalse(self.output_path)
+        self.assertEqual(self.get_data(), self.contained_get_data[-1])
+        self.assertEqual(self.output_path, self.contained_get_data[12][4])
+
+        for i in range(4, 6):
+            with self.subTest(n=i):
+                self.assertFalse(self.get_data())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

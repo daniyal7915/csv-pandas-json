@@ -33,6 +33,15 @@ class Container:
                 f'{os.path.join("filez", "2.csv")}', f'{os.path.join("files", "9.csv")}',
                 f'{os.path.join("files", "10.csv")}']
 
+    @property
+    def contained_get_data(self):
+        output = [1 for i in range(0, 12)]
+        output[7] = None
+        output = output + [[1, 1, 1, 1, '.json'], [1, 1, 1, 1, '.json'], None,
+                           {'courses': 1, 'students': 1, 'tests': 1, 'marks': 1}]
+        return output
+
+
 
 
 
