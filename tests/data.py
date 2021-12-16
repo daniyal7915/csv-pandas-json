@@ -53,7 +53,7 @@ class Container:
 
         dfs['students'] = dfs['students'][['id', 'name', 'totalAverage', 'courses']]
         dfs['merged'] = dfs['merged'][['id_x', 'name', 'teacher', 'id_y', 'course_id', 'weight',
-                                      'test_id', 'student_id', 'mark']]
+                                      'test_id', 'student_id', 'courseAverage']]
 
         return dfs
 

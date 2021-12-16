@@ -92,6 +92,7 @@ class Output(CheckData):
         data['merged'] = pd.merge(data['courses'], tests_marks, left_on='id', right_on='course_id', how='inner')
 
         data['merged']['mark'] = data['merged']['mark'] * data['merged']['weight'] / 100
+        data['merged'].rename({'mark': 'courseAverage'}, axis=1, inplace=True)
 
         for name in ['courses', 'tests', 'marks']:
             del data[name]
@@ -106,7 +107,7 @@ class Output(CheckData):
 
         for student in output['students']:
             df = data['merged'].loc[data['merged']['student_id'] == student['id']]
-            df = df[['course_id', 'name', 'teacher', 'mark']].rename({'mark': 'courseAverage'}, axis=1)
+            df = df[['course_id', 'name', 'teacher', 'courseAverage']]
             df = df.groupby(['course_id', 'name', 'teacher'])['courseAverage'].sum().reset_index()
             df['courseAverage'] = df['courseAverage'].apply(lambda x: round(x, 2))
             student['courses'] = df.to_dict(orient='records')
