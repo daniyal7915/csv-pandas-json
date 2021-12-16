@@ -34,7 +34,7 @@ class TestGetData(TestCase, Container):
     def test_csv_to_df(self, dtype):
         """Test the csv_to_df method"""
         dtype.side_effect = self.contained_dtype[:-1][::-1] + [self.contained_dtype[1]]*3
-        names = [self.contained_names[0], self.contained_names[3]]
+        names = [self.contained_names[0][0], self.contained_names[0][3]]
 
         for i in range(2):
             with self.subTest(test=i):
@@ -68,7 +68,7 @@ class TestCheckData(TestCase, Container):
         result = func()
         count = 0
 
-        for name in self.contained_names:
+        for name in self.contained_names[0]:
             count += 1
             with self.subTest(test=count):
                 self.assertTrue(result[name].equals(self.contained_weight_all[0][name]))
@@ -92,60 +92,27 @@ class TestCheckData(TestCase, Container):
         self.process(check.check_all)
 
 
+class TestOutput(TestCase, Container):
+    """Test Output class"""
+
+    def test_prepare_data(self):
+        """Test the prepare_data method"""
+        result = output.prepare_data(self.contained_df())
+        count = 0
+
+        for name in self.contained_names[1]:
+            count += 1
+            with self.subTest(test=count):
+                self.assertTrue(result[name].equals(self.contained_prepare_data()[name]))
+
+    @mock.patch('engine.engine.Output.prepare_data')
+    def test_output_data(self, prepared_data):
+        prepared_data.side_effect = [self.contained_prepare_data(), self.contained_prepare_data(2)]
+
+        for i in range(2):
+            with self.subTest(test=i+1):
+                self.assertEqual(output.output_data(1), self.contained_output_data[i])
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-main()
+if __name__ == "__main__":
+    main()

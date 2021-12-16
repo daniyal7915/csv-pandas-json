@@ -9,7 +9,6 @@ class GetData:
     output_path = None
 
     def get_paths(self):
-        print("GetData.get_paths")
         """Check and set file paths"""
         try:
             paths = sys.argv[1:]
@@ -21,7 +20,6 @@ class GetData:
             pass
 
     def set_dtype(self, file):
-        print('GetData.set_dtype')
         """Set and return a data type argument for df.astype"""
         dtype = 'int'
 
@@ -31,7 +29,6 @@ class GetData:
         return dtype
 
     def csv_to_df(self, path, file=None):
-        print('GetData.csv_to_df')
         """Create dataframe from csv"""
         try:
             df = pd.read_csv(path)
@@ -41,7 +38,6 @@ class GetData:
             pass
 
     def get_data(self):
-        print('GetData.get_data')
         """Return a dict with created dataframes"""
         paths = self.get_paths()
 
@@ -60,7 +56,6 @@ class CheckData(GetData):
     """Check data"""
 
     def check_weight(self):
-        print('CheckData_weight')
         """Check if weight of all tests in each course is equal to 100"""
         data = self.get_data()
 
@@ -71,7 +66,6 @@ class CheckData(GetData):
             return data
 
     def check_all(self):
-        print('CheckData.check_all')
         """Check if 0 <= marks <= 100 in the marks dataframe. Call teh weight check """
         data = self.check_weight()
 
@@ -89,11 +83,10 @@ class Output(CheckData):
     output = {"error": "Invalid course weights"}
 
     def prepare_data(self, data):
-        print('Output.prepare_df')
-        """Insert two addtional columns into students; merge courses, tests, marks;
+        """Insert two additional columns into students; merge courses, tests, marks;
            recalculate marks. Delete redundant data. Return prepared data"""
         data['students'].insert(2, 'totalAverage', 0)
-        data['students'].insert(3, 'courses', None)
+        data['students'].insert(3, 'courses', 0)
 
         tests_marks = pd.merge(data['tests'], data['marks'], left_on='id', right_on='test_id', how='inner')
         data['merged'] = pd.merge(data['courses'], tests_marks, left_on='id', right_on='course_id', how='inner')
@@ -106,7 +99,6 @@ class Output(CheckData):
         return data
 
     def output_data(self, data):
-        print('Output.output_data')
         """Create output data"""
         data = self.prepare_data(data)
 
@@ -123,7 +115,6 @@ class Output(CheckData):
         return output
 
     def create_output(self):
-        print('Output.create_output')
         """Create .json"""
         checked_data = self.check_all()
 
