@@ -1,9 +1,11 @@
-import os
+import json
 import pandas as pd
+from os.path import join, dirname, realpath
 
 
 class Container:
     """Data container for testing"""
+    directory = dirname(realpath(__file__))
 
     @property
     def contained_cl_arguments(self):
@@ -20,25 +22,29 @@ class Container:
         return [['courses', 'students', 'tests', 'marks'], ['students', 'merged']]
 
     def contained_df(self, variant=0):
-        dfs = {}
+        output = {}
 
         for i in range(1, 5):
-            dfs[self.contained_names[0][i-1]] = pd.read_csv(os.path.join("files", f"{i+variant}.csv"))
+            output[self.contained_names[0][i-1]] = pd.read_csv(join(self.directory, "files", f"{i+variant}.csv"))
 
-        return dfs
+        return output
 
     @property
     def contained_paths(self):
-        return [f'{os.path.join("files", "1.csv")}', f'{os.path.join("files", "4.csv")}',
-                f'{os.path.join("filez", "2.csv")}', f'{os.path.join("files", "9.csv")}',
-                f'{os.path.join("files", "10.csv")}']
+        output = []
+
+        for key, value in {1: 'files', 4: 'files', 2: 'filez', 9: 'files', 10: 'files'}.items():
+            output.append(join(self.directory, f'{value}', f'{key}.csv'))
+
+        return output
 
     @property
     def contained_get_data(self):
         output = [1 for i in range(0, 12)]
         output[7] = None
-        output = output + [[1, 1, 1, 1, '.json'], [1, 1, 1, 1, '.json'], None,
-                           {'courses': 1, 'students': 1, 'tests': 1, 'marks': 1}]
+        output = output + [[1, 1, 1, 1, '.json'], [1, 1, 1, 1, '.json'], None, {'courses': 1, 'students': 1,
+                                                                                'tests': 1, 'marks': 1}]
+
         return output
 
     @property
@@ -46,73 +52,23 @@ class Container:
         return [self.contained_df(), self.contained_df(8), None]
 
     def contained_prepare_data(self, variant=0):
-        dfs = {}
+        output = {}
 
         for i in range(13, 15):
-            dfs[self.contained_names[1][i - 13]] = pd.read_csv(os.path.join("files", f"{i+variant}.csv"))
+            output[self.contained_names[1][i - 13]] = pd.read_csv(join(self.directory, "files", f"{i+variant}.csv"))
 
-        dfs['students'] = dfs['students'][['id', 'name', 'totalAverage', 'courses']]
-        dfs['merged'] = dfs['merged'][['id_x', 'name', 'teacher', 'id_y', 'course_id', 'weight',
-                                      'test_id', 'student_id', 'courseAverage']]
+        output['students'] = output['students'][['id', 'name', 'totalAverage', 'courses']]
+        output['merged'] = output['merged'][['id_x', 'name', 'teacher', 'id_y', 'course_id', 'weight',
+                                             'test_id', 'student_id', 'courseAverage']]
 
-        return dfs
-
-    @property
-    def contained_create_output(self):
-        return [1, None, 1, 1, 1, 1, 1, 1, f'{os.path.join("files", "17.csv")}', 1,
-                f'{os.path.join("filez", "17.csv")}', None]
+        return output
 
     @property
     def contained_output_data(self):
-        return [{'students': [{'courses': [{'courseAverage': 90.1,
-                                            'course_id': 1,
-                                            'name': 'Biology',
-                                            'teacher': 'Mr. D'},
-                                           {'courseAverage': 51.8,
-                                            'course_id': 2,
-                                            'name': 'History',
-                                            'teacher': ' Mrs. P'},
-                                           {'courseAverage': 74.2,
-                                            'course_id': 3,
-                                            'name': 'Math',
-                                            'teacher': ' Mrs. C'}],
-                               'id': 1,
-                               'name': 'A',
-                               'totalAverage': 72.03},
-                              {'courses': [{'courseAverage': 50.1,
-                                            'course_id': 1,
-                                            'name': 'Biology',
-                                            'teacher': 'Mr. D'},
-                                           {'courseAverage': 74.2,
-                                            'course_id': 3,
-                                            'name': 'Math',
-                                            'teacher': ' Mrs. C'}],
-                               'id': 2,
-                               'name': 'B',
-                               'totalAverage': 62.15},
-                              {'courses': [{'courseAverage': 90.1,
-                                            'course_id': 1,
-                                            'name': 'Biology',
-                                            'teacher': 'Mr. D'},
-                                           {'courseAverage': 51.8,
-                                            'course_id': 2,
-                                            'name': 'History',
-                                            'teacher': ' Mrs. P'},
-                                           {'courseAverage': 74.2,
-                                            'course_id': 3,
-                                            'name': 'Math',
-                                            'teacher': ' Mrs. C'}],
-                               'id': 3,
-                               'name': 'C',
-                               'totalAverage': 72.03}]},
-                {'students': [{'courses': [{'courseAverage': 1.3,
-                                            'course_id': 1,
-                                            'name': 'Biology',
-                                            'teacher': 'Mr. D'},
-                                           {'courseAverage': 51.8,
-                                            'course_id': 2,
-                                            'name': 'History',
-                                            'teacher': ' Mrs. P'}],
-                               'id': 5,
-                               'name': 'D',
-                               'totalAverage': 26.55}]}]
+        output = []
+
+        for i in range(17, 19):
+            with open(join(self.directory, "files", f"{i}.json")) as infile:
+                output.append(json.load(infile))
+
+        return output
